@@ -1,0 +1,47 @@
+C51 COMPILER V9.54   SEPARATE_BUTTON                                                       10/24/2022 23:48:54 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE SEPARATE_BUTTON
+OBJECT MODULE PLACED IN .\Objects\separate_button.obj
+COMPILER INVOKED BY: D:\app\keil51\C51\BIN\C51.EXE user\separate_button.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\user;D:\app\
+                    -keil51\C51\INC\Atmel) DEBUG OBJECTEXTEND PRINT(.\Listings\separate_button.lst) TABS(2) OBJECT(.\Objects\separate_button.
+                    -obj)
+
+line level    source
+
+   1          #include "separate_button.h"
+   2          #include "delay.h"
+   3          
+   4          ///按下KEY1led按位左移
+   5          unsigned char key_state(int i)
+   6          {
+   7   1          if(i==1)
+   8   1          {
+   9   2              if(KEY1==0)
+  10   2              {
+  11   3                  while(KEY1==0)
+  12   3                  {
+  13   4                      ;
+  14   4                  }
+  15   3                  
+  16   3              }
+  17   2          }
+  18   1          return ;
+*** WARNING C173 IN LINE 18 OF user\separate_button.c: missing return-expression
+  19   1      }
+*** WARNING C173 IN LINE 19 OF user\separate_button.c: missing return-expression
+*** WARNING C290 IN LINE 19 OF user\separate_button.c: missing return value
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     13    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)

@@ -18,16 +18,28 @@ Hex Converter:   OH51.exe V2.7.0.0
 CPU DLL:         S8051.DLL V3.100.0.0
 Dialog DLL:      DP51.DLL V2.62.0.1 
 <h2>Project:</h2>
-E:\003-嵌入式学习\000-51单片机程序\2-1 点亮一个LED\Project.uvproj
-Project File Date:  10/19/2021
+E:\005-code\000_学习\51_单片机\51单片机程序\Project.uvproj
+Project File Date:  10/24/2022
 
 <h2>Output:</h2>
 Rebuild target 'Target 1'
 compiling main.c...
+compiling delay.c...
+compiling separate_button.c...
+user\separate_button.c(18): warning C173: missing return-expression
+user\separate_button.c(19): warning C173: missing return-expression
+user\separate_button.c(19): warning C290: missing return value
+compiling task.c...
+user\task.c(44): warning C280: 'ch': unreferenced local variable
+compiling nixie.c...
 linking...
-Program Size: data=9.0 xdata=0 code=20
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_KEY_STATE?SEPARATE_BUTTON
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?GET_TASK_STATE?TASK
+Program Size: data=22.0 xdata=0 code=362
 creating hex file from ".\Objects\Project"...
-".\Objects\Project" - 0 Error(s), 0 Warning(s).
+".\Objects\Project" - 0 Error(s), 6 Warning(s).
 </pre>
 </body>
 </html>

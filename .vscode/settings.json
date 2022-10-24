@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "nixie.h": "c",
+        "task.h": "c",
+        "separate_button.h": "c"
+    }
+}

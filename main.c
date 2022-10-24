@@ -1,10 +1,14 @@
 #include <REGX52.H>
+#include "delay.h"
+#include "task.h"
+#include "nixie.h"
 
 void main()
 {
-	P2=0xFE;	//1111 1110 低电平为点亮
+	char ch = 1;
+	taskinit();
 	while(1)
 	{
-		
+		fsmTask(ch);
 	}
 }

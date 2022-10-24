@@ -1,31 +1,35 @@
-C51 COMPILER V9.54   MAIN                                                                  10/24/2022 14:48:35 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  10/24/2022 23:48:54 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: D:\app\keil51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\m
-                    -ain.lst) TABS(2) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: D:\app\keil51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\user;D:\app\keil51\C51\INC\A
+                    -tmel) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
 
 line level    source
 
    1          #include <REGX52.H>
-   2          
-   3          void main()
-   4          {
-   5   1        P2=0xFE;  //1111 1110 低电平为点亮
-   6   1        while(1)
-   7   1        {
-   8   2          
-   9   2        }
-  10   1      }
+   2          #include "delay.h"
+   3          #include "task.h"
+   4          #include "nixie.h"
+   5          
+   6          void main()
+   7          {
+   8   1        char ch = 1;
+   9   1        taskinit();
+  10   1        while(1)
+  11   1        {
+  12   2          fsmTask(ch);
+  13   2        }
+  14   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =      5    ----
+   CODE SIZE        =     13    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----    ----
+   DATA SIZE        =   ----       1
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
