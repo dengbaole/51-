@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  10/24/2022 23:48:54 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  10/25/2022 18:05:30 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -12,20 +12,25 @@ line level    source
    2          #include "delay.h"
    3          #include "task.h"
    4          #include "nixie.h"
-   5          
-   6          void main()
-   7          {
-   8   1        char ch = 1;
-   9   1        taskinit();
-  10   1        while(1)
-  11   1        {
-  12   2          fsmTask(ch);
-  13   2        }
-  14   1      }
+   5          #include "timer.h"
+   6          #include "uart.h"
+   7          
+   8          void main()
+   9          {
+  10   1        char ch = 1;
+  11   1        taskinit();
+  12   1        timer0_init();
+  13   1        uart_init();   //波特率4800 8位无校验
+  14   1          UART_SendByte(0x66);
+  15   1        while(1)
+  16   1        {
+  17   2          fsmTask(ch);
+  18   2        }
+  19   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     13    ----
+   CODE SIZE        =     24    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   NIXIE                                                                 10/24/2022 23:48:54 PAGE 1   
+C51 COMPILER V9.54   NIXIE                                                                 10/25/2022 18:05:30 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE NIXIE
@@ -15,7 +15,7 @@ line level    source
    5          //                    数码管的  0   1    2    3    4    5    6    7    8    9
    6          unsigned char NixieTable[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F};
    7          
-   8          
+   8          //数码管显示（列，显示数字）
    9          void Nixie(unsigned char Location,Number)
   10          {
   11   1        switch(Location)

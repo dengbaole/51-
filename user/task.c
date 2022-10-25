@@ -1,15 +1,17 @@
 #include "task.h"
 #include "nixie.h"
 #include "separate_button.h"
+#include "matrixkey.h"
 
 
 static void MyTask(char ch);
+static void NixieTask(void);
 
 typedef enum
 {
 	STATE_IDLE, 									//����״̬
 	STATE_NIXIE,									//�ϴ�����״̬
-	STATE_SECOND, 								//��������״̬
+	STATE_MATRIXKEY, 								//��������״̬
 	STATE_ENROLL,									//ע��״̬
 	STATE_MATCH,									//ƥ��״̬
 	STATE_DELETE,									//ɾ��״̬
@@ -21,9 +23,21 @@ typedef enum
 	STATE_MAX
 } _FsmState; 
 
+typedef enum
+{
+	NIXIE_STATE_IDLE,
+	NIXIE_STATE_WORK,
+	NIXIE_STATE_END,
+	NIXIE_STATE_MAX
+}_NixieState;
+
+
+
 
 
 _FsmState get_state;
+_NixieState get_Nixie_state;
+
 int get_task_state(void)
 {
 	return get_state;
@@ -39,6 +53,7 @@ void fsmTask(char ch)
 void taskinit(void)
 {
 	get_state = STATE_IDLE;
+	get_Nixie_state = NIXIE_STATE_IDLE;
 }
 
 static void MyTask(char ch)
@@ -52,14 +67,44 @@ static void MyTask(char ch)
 		}
         break;
         case STATE_NIXIE:
-		
-		Nixie(1,1);
-	    Nixie(2,2);
-		get_state=STATE_IDLE;
+		NixieTask();
         break;
-		case STATE_SECOND:
+		case STATE_MATRIXKEY:
         default:
         break;
     }
 
 }
+
+
+void NixieTaskInit(void)
+{
+	get_Nixie_state = NIXIE_STATE_IDLE;
+}
+
+static void NixieTask(void)
+{
+	switch(get_Nixie_state)
+	{
+		case NIXIE_STATE_IDLE:
+		if(KEY1==0)
+		{
+			
+			get_Nixie_state = NIXIE_STATE_WORK;
+		}
+		Nixie(1,2);
+		break;
+		case NIXIE_STATE_WORK:
+		Nixie(1,1);
+		if(KEY2==0)
+		{
+			
+			get_Nixie_state = NIXIE_STATE_IDLE;
+		}
+		break;
+		case NIXIE_STATE_END:
+		get_state=STATE_IDLE;
+		break;
+	}
+
+} 

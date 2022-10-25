@@ -26,20 +26,29 @@ Rebuild target 'Target 1'
 compiling main.c...
 compiling delay.c...
 compiling separate_button.c...
-user\separate_button.c(18): warning C173: missing return-expression
-user\separate_button.c(19): warning C173: missing return-expression
-user\separate_button.c(19): warning C290: missing return value
 compiling task.c...
-user\task.c(44): warning C280: 'ch': unreferenced local variable
+user\task.c(59): warning C280: 'ch': unreferenced local variable
 compiling nixie.c...
+compiling matrixkey.c...
+compiling led.c...
+compiling timer.c...
+compiling uart.c...
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_KEY_STATE?SEPARATE_BUTTON
+    SEGMENT: ?PR?KEY_STATE?SEPARATE_BUTTON
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?GET_TASK_STATE?TASK
-Program Size: data=22.0 xdata=0 code=362
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?NIXIETASKINIT?TASK
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MATRIXKEY?MATRIXKEY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMER1_INIT?TIMER
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?TIMER2_INIT?TIMER
+Program Size: data=29.0 xdata=0 code=990
 creating hex file from ".\Objects\Project"...
-".\Objects\Project" - 0 Error(s), 6 Warning(s).
+".\Objects\Project" - 0 Error(s), 7 Warning(s).
 </pre>
 </body>
 </html>
