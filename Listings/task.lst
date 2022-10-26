@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   TASK                                                                  10/25/2022 18:05:30 PAGE 1   
+C51 COMPILER V9.54   TASK                                                                  10/26/2022 21:15:52 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TASK
@@ -12,122 +12,124 @@ line level    source
    2          #include "nixie.h"
    3          #include "separate_button.h"
    4          #include "matrixkey.h"
-   5          
+   5          #include "uart.h"
    6          
-   7          static void MyTask(char ch);
-   8          static void NixieTask(void);
-   9          
-  10          typedef enum
-  11          {
-  12            STATE_IDLE,                   //����״̬
-  13            STATE_NIXIE,                  //�ϴ�����״̬
-  14            STATE_MATRIXKEY,                //��������״̬
-  15            STATE_ENROLL,                 //ע��״̬
-  16            STATE_MATCH,                  //ƥ��״̬
-  17            STATE_DELETE,                 //ɾ��״̬
-  18            STATE_STANDBY,
-  19            STATE_WRITEFLASH,
-  20            STATE_USBKEY,
-  21            STATE_USER_TEST,
-  22            STATE_ENROLL_NOCHECK_FINGER,
-  23            STATE_MAX
-  24          } _FsmState; 
-  25          
-  26          typedef enum
-  27          {
-  28            NIXIE_STATE_IDLE,
-  29            NIXIE_STATE_WORK,
-  30            NIXIE_STATE_END,
-  31            NIXIE_STATE_MAX
-  32          }_NixieState;
-  33          
+   7          
+   8          static void MyTask(char ch);
+   9          static void NixieTask(void);
+  10          
+  11          typedef enum
+  12          {
+  13            STATE_IDLE,                   //����״̬
+  14            STATE_NIXIE,                  //�ϴ�����״̬
+  15            STATE_MATRIXKEY,                //��������״̬
+  16            STATE_ENROLL,                 //ע��״̬
+  17            STATE_MATCH,                  //ƥ��״̬
+  18            STATE_DELETE,                 //ɾ��״̬
+  19            STATE_STANDBY,
+  20            STATE_WRITEFLASH,
+  21            STATE_USBKEY,
+  22            STATE_USER_TEST,
+  23            STATE_ENROLL_NOCHECK_FINGER,
+  24            STATE_MAX
+  25          } _FsmState; 
+  26          
+  27          typedef enum
+  28          {
+  29            NIXIE_STATE_IDLE,
+  30            NIXIE_STATE_WORK,
+  31            NIXIE_STATE_END,
+  32            NIXIE_STATE_MAX
+  33          }_NixieState;
   34          
   35          
   36          
   37          
-  38          _FsmState get_state;
-  39          _NixieState get_Nixie_state;
-  40          
-  41          int get_task_state(void)
-  42          {
-  43   1        return get_state;
-  44   1      }
-  45          
+  38          
+  39          _FsmState get_state;
+  40          _NixieState get_Nixie_state;
+  41          
+  42          int get_task_state(void)
+  43          {
+  44   1        return get_state;
+  45   1      }
   46          
   47          
   48          
-  49          void fsmTask(char ch)
-  50          {
-  51   1        MyTask(ch);
-  52   1      }
-  53          void taskinit(void)
-  54          {
-C51 COMPILER V9.54   TASK                                                                  10/25/2022 18:05:30 PAGE 2   
+  49          
+  50          void fsmTask(char ch)
+  51          {
+  52   1        MyTask(ch);
+  53   1      }
+  54          void task_init(void)
+C51 COMPILER V9.54   TASK                                                                  10/26/2022 21:15:52 PAGE 2   
 
-  55   1        get_state = STATE_IDLE;
-  56   1        get_Nixie_state = NIXIE_STATE_IDLE;
-  57   1      }
-  58          
-  59          static void MyTask(char ch)
-  60          {
-  61   1          switch(get_state)
-  62   1          {
-  63   2              case STATE_IDLE:
-  64   2              if(KEY1==0)
-  65   2          {
-  66   3            get_state=STATE_NIXIE;
-  67   3          }
-  68   2              break;
-  69   2              case STATE_NIXIE:
-  70   2          NixieTask();
-  71   2              break;
-  72   2          case STATE_MATRIXKEY:
-  73   2              default:
-  74   2              break;
-  75   2          }
-  76   1      
-  77   1      }
-*** WARNING C280 IN LINE 59 OF user\task.c: 'ch': unreferenced local variable
-  78          
-  79          
-  80          void NixieTaskInit(void)
-  81          {
-  82   1        get_Nixie_state = NIXIE_STATE_IDLE;
-  83   1      }
-  84          
-  85          static void NixieTask(void)
-  86          {
-  87   1        switch(get_Nixie_state)
-  88   1        {
-  89   2          case NIXIE_STATE_IDLE:
-  90   2          if(KEY1==0)
-  91   2          {
-  92   3            
-  93   3            get_Nixie_state = NIXIE_STATE_WORK;
-  94   3          }
-  95   2          Nixie(1,2);
-  96   2          break;
-  97   2          case NIXIE_STATE_WORK:
-  98   2          Nixie(1,1);
-  99   2          if(KEY2==0)
- 100   2          {
- 101   3            
- 102   3            get_Nixie_state = NIXIE_STATE_IDLE;
- 103   3          }
- 104   2          break;
- 105   2          case NIXIE_STATE_END:
- 106   2          get_state=STATE_IDLE;
- 107   2          break;
- 108   2        }
- 109   1      
- 110   1      } 
+  55          {
+  56   1        get_state = STATE_IDLE;
+  57   1        get_Nixie_state = NIXIE_STATE_IDLE;
+  58   1      }
+  59          
+  60          static void MyTask(char ch)
+  61          {
+  62   1          switch(get_state)
+  63   1          {
+  64   2              case STATE_IDLE:
+  65   2      
+  66   2              // if(KEY1==0)
+  67   2          // {
+  68   2          //  get_state=STATE_NIXIE;
+  69   2          // }
+  70   2              break;
+  71   2              case STATE_NIXIE:
+  72   2          NixieTask();
+  73   2              break;
+  74   2          case STATE_MATRIXKEY:
+  75   2              default:
+  76   2              break;
+  77   2          }
+  78   1      
+  79   1      }
+*** WARNING C280 IN LINE 60 OF user\task.c: 'ch': unreferenced local variable
+  80          
+  81          
+  82          void NixieTaskInit(void)
+  83          {
+  84   1        get_Nixie_state = NIXIE_STATE_IDLE;
+  85   1      }
+  86          
+  87          static void NixieTask(void)
+  88          {
+  89   1        switch(get_Nixie_state)
+  90   1        {
+  91   2          case NIXIE_STATE_IDLE:
+  92   2          if(KEY1==0)
+  93   2          {
+  94   3            
+  95   3            get_Nixie_state = NIXIE_STATE_WORK;
+  96   3          }
+  97   2          Nixie(1,2);
+  98   2          break;
+  99   2          case NIXIE_STATE_WORK:
+ 100   2          Nixie(1,1);
+ 101   2          if(KEY2==0)
+ 102   2          {
+ 103   3            
+ 104   3            get_Nixie_state = NIXIE_STATE_IDLE;
+ 105   3          }
+ 106   2          break;
+ 107   2          case NIXIE_STATE_END:
+ 108   2          get_state=STATE_IDLE;
+ 109   2          break;
+ 110   2        }
+ 111   1      
+ 112   1      } 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     86    ----
-   CONSTANT SIZE    =   ----    ----
-C51 COMPILER V9.54   TASK                                                                  10/25/2022 18:05:30 PAGE 3   
+C51 COMPILER V9.54   TASK                                                                  10/26/2022 21:15:52 PAGE 3   
 
+   CODE SIZE        =     76    ----
+   CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      2       1

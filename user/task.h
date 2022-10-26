@@ -5,7 +5,7 @@
 
 int get_task_state(void);
 void fsmTask(char ch);
-void taskinit(void);
+void task_init(void);
 void NixieTaskInit(void);
 
 

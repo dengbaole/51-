@@ -2,6 +2,7 @@
 #include "nixie.h"
 #include "separate_button.h"
 #include "matrixkey.h"
+#include "uart.h"
 
 
 static void MyTask(char ch);
@@ -50,7 +51,7 @@ void fsmTask(char ch)
 {
 	MyTask(ch);
 }
-void taskinit(void)
+void task_init(void)
 {
 	get_state = STATE_IDLE;
 	get_Nixie_state = NIXIE_STATE_IDLE;
@@ -61,10 +62,11 @@ static void MyTask(char ch)
     switch(get_state)
     {
         case STATE_IDLE:
-        if(KEY1==0)
-		{
-			get_state=STATE_NIXIE;
-		}
+
+        // if(KEY1==0)
+		// {
+		// 	get_state=STATE_NIXIE;
+		// }
         break;
         case STATE_NIXIE:
 		NixieTask();

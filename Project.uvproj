@@ -311,7 +311,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\user;..\51单片机程序</IncludePath>
+              <IncludePath>.\user;D:\app\keil51\C51\INC\Atmel</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -379,9 +379,44 @@
               <FilePath>.\user\delay.c</FilePath>
             </File>
             <File>
-              <FileName>delay.h</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\user\delay.h</FilePath>
+              <FileName>separate_button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\separate_button.c</FilePath>
+            </File>
+            <File>
+              <FileName>task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\task.c</FilePath>
+            </File>
+            <File>
+              <FileName>nixie.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\nixie.c</FilePath>
+            </File>
+            <File>
+              <FileName>matrixkey.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\matrixkey.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>log.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\log.c</FilePath>
             </File>
           </Files>
         </Group>

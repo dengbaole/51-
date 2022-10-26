@@ -6,6 +6,7 @@
 ".\Objects\matrixkey.obj",
 ".\Objects\led.obj",
 ".\Objects\timer.obj",
-".\Objects\uart.obj" 
+".\Objects\uart.obj",
+".\Objects\log.obj" 
 TO ".\Objects\Project" 
 PRINT(".\Listings\Project.m51") RAMSIZE(256) 
