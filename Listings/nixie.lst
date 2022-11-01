@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   NIXIE                                                                 10/26/2022 21:15:52 PAGE 1   
+C51 COMPILER V9.54   NIXIE                                                                 11/01/2022 16:58:01 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE NIXIE
@@ -12,35 +12,78 @@ line level    source
    2          #include <REGX52.H>
    3          #include "delay.h"
    4          
-   5          //                    数码管的  0   1    2    3    4    5    6    7    8    9
-   6          unsigned char NixieTable[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F};
-   7          
-   8          //数码管显示（列，显示数字）
-   9          void Nixie(unsigned char Location,Number)
-  10          {
-  11   1        switch(Location)
-  12   1        {
-  13   2          case 1:P2_4=1;P2_3=1;P2_2=1;break;
-  14   2          case 2:P2_4=1;P2_3=1;P2_2=0;break;
-  15   2          case 3:P2_4=1;P2_3=0;P2_2=1;break;
-  16   2          case 4:P2_4=1;P2_3=0;P2_2=0;break;
-  17   2          case 5:P2_4=0;P2_3=1;P2_2=1;break;
-  18   2          case 6:P2_4=0;P2_3=1;P2_2=0;break;
-  19   2          case 7:P2_4=0;P2_3=0;P2_2=1;break;
-  20   2          case 8:P2_4=0;P2_3=0;P2_2=0;break;
-  21   2        }
-  22   1        P0=NixieTable[Number];
-  23   1        Delay1ms(1);
-  24   1        P0=0x00;
-  25   1      }
+   5          //                    
+   6          unsigned char NixieTable[] = {  0x3F,  //"0"
+   7                          0x06,  //"1"
+   8                          0x5B,  //"2"
+   9                          0x4F,  //"3"
+  10                          0x66,  //"4"
+  11                          0x6D,  //"5"
+  12                          0x7D,  //"6"
+  13                          0x07,  //"7"
+  14                          0x7F,  //"8"
+  15                          0x6F,  //"9"
+  16                          0x77,  //"A"
+  17                          0x7C,  //"B"
+  18                          0x39,  //"C"
+  19                          0x5E,  //"D"
+  20                          0x79,  //"E"
+  21                          0x71,  //"F"
+  22                          0x76,  //"H"
+  23                          0x38,  //"L"
+  24                          0x37,  //"n"
+  25                          0x3E,  //"u"
+  26                          0x73,  //"P"
+  27                          0x5C,  //"o"
+  28                          0x40,  //"-"
+  29                          0x00  //熄灭
+  30                            };
+  31          
+  32          //数码管显示（列，显示数字）
+  33          void Nixie(unsigned char Location,Number)
+  34          {
+  35   1        switch(Location)
+  36   1        {
+  37   2          case 1:P2_4=1;P2_3=1;P2_2=1;break;
+  38   2          case 2:P2_4=1;P2_3=1;P2_2=0;break;
+  39   2          case 3:P2_4=1;P2_3=0;P2_2=1;break;
+  40   2          case 4:P2_4=1;P2_3=0;P2_2=0;break;
+  41   2          case 5:P2_4=0;P2_3=1;P2_2=1;break;
+  42   2          case 6:P2_4=0;P2_3=1;P2_2=0;break;
+  43   2          case 7:P2_4=0;P2_3=0;P2_2=1;break;
+  44   2          case 8:P2_4=0;P2_3=0;P2_2=0;break;
+  45   2        }
+  46   1        P0=NixieTable[Number];
+  47   1        Delay1ms(1);
+  48   1        P0=0x00;
+  49   1      }
+  50          
+  51          
+  52          void Static_Nixie(unsigned char Location,Number)
+  53          {
+  54   1        switch(Location)
+C51 COMPILER V9.54   NIXIE                                                                 11/01/2022 16:58:01 PAGE 2   
+
+  55   1        {
+  56   2          case 1:P2_4=1;P2_3=1;P2_2=1;break;
+  57   2          case 2:P2_4=1;P2_3=1;P2_2=0;break;
+  58   2          case 3:P2_4=1;P2_3=0;P2_2=1;break;
+  59   2          case 4:P2_4=1;P2_3=0;P2_2=0;break;
+  60   2          case 5:P2_4=0;P2_3=1;P2_2=1;break;
+  61   2          case 6:P2_4=0;P2_3=1;P2_2=0;break;
+  62   2          case 7:P2_4=0;P2_3=0;P2_2=1;break;
+  63   2          case 8:P2_4=0;P2_3=0;P2_2=0;break;
+  64   2        }
+  65   1        P0=NixieTable[Number];
+  66   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    109    ----
+   CODE SIZE        =    208    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     10    ----
+   DATA SIZE        =     24    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

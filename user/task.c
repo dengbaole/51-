@@ -3,8 +3,9 @@
 #include "separate_button.h"
 #include "matrixkey.h"
 #include "uart.h"
+#include "delay.h"
 
-
+unsigned char button;
 static void MyTask(char ch);
 static void NixieTask(void);
 
@@ -63,10 +64,7 @@ static void MyTask(char ch)
     {
         case STATE_IDLE:
 
-        // if(KEY1==0)
-		// {
-		// 	get_state=STATE_NIXIE;
-		// }
+
         break;
         case STATE_NIXIE:
 		NixieTask();

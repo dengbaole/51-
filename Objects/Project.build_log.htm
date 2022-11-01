@@ -24,10 +24,11 @@ Project File Date:  10/26/2022
 <h2>Output:</h2>
 Rebuild target 'Target 1'
 compiling main.c...
+main.c(35): warning C206: 'key_state': missing function-prototype
 compiling delay.c...
 compiling separate_button.c...
 compiling task.c...
-user\task.c(60): warning C280: 'ch': unreferenced local variable
+user\task.c(61): warning C280: 'ch': unreferenced local variable
 compiling nixie.c...
 compiling matrixkey.c...
 compiling led.c...
@@ -36,20 +37,27 @@ compiling uart.c...
 compiling log.c...
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?KEY_STATE?SEPARATE_BUTTON
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?GET_TASK_STATE?TASK
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?NIXIETASKINIT?TASK
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?MATRIXKEY?MATRIXKEY
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?TIMER1_INIT?TIMER
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?TIMER2_INIT?TIMER
-Program Size: data=68.1 xdata=0 code=2425
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  FREQTABLE
+    MODULE:  .\Objects\timer.obj (TIMER)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  FREQTABLE
+    MODULE:  .\Objects\timer.obj (TIMER)
+    ADDRESS: 08F2H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  FREQTABLE
+    MODULE:  .\Objects\timer.obj (TIMER)
+    ADDRESS: 0900H
+Program Size: data=88.1 xdata=0 code=2675
 creating hex file from ".\Objects\Project"...
-".\Objects\Project" - 0 Error(s), 7 Warning(s).
+".\Objects\Project" - 0 Error(s), 9 Warning(s).
 </pre>
 </body>
 </html>

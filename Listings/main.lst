@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  10/26/2022 21:15:52 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  11/01/2022 16:58:00 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -14,34 +14,80 @@ line level    source
    4          #include "nixie.h"
    5          #include "timer.h"
    6          #include "uart.h"
-   7          //#include "log.h"
-   8          
-   9          void main()
-  10          {
-  11   1        char ch = 1;
-  12   1        task_init();
-  13   1        timer0_init();
-  14   1        uart_init();   //波特率4800 8位无校验
-  15   1        //printf("51_code version1.0.0\n");
-  16   1        //EMlog(LOG_DEBUG,"HELLO\n");
-  17   1        P2_3 = 0;
-  18   1        while(1)
-  19   1        {
-  20   2          uart_service(recv_buf);
-  21   2          fsmTask(ch);
-  22   2        }
-  23   1      }
+   7          #include "matrixkey.h"
+   8          //#include "log.h"
+   9          
+  10          
+  11          
+  12          void main()
+  13          {
+  14   1        unsigned char button;
+  15   1        char ch = 1;
+  16   1        unsigned char KeyNum;
+  17   1        task_init();
+  18   1        timer0_init();
+  19   1        uart_init();   //波特率4800 8位无校验
+  20   1        //printf("51_code version1.0.0\n");
+  21   1        //EMlog(LOG_DEBUG,"HELLO\n");
+  22   1      
+  23   1        while(1)
+  24   1        {
+  25   2          //矩阵按键
+  26   2          
+  27   2          KeyNum = MatrixKey();
+  28   2          if(KeyNum)
+  29   2          {
+  30   3            printf("Keynum = %d",KeyNum);
+  31   3            Static_Nixie(8,KeyNum);
+  32   3          }
+  33   2      
+  34   2          //独立按键
+  35   2          button = key_state();
+*** WARNING C206 IN LINE 35 OF main.c: 'key_state': missing function-prototype
+  36   2          if(button)
+  37   2          {
+  38   3            //Static_Nixie(1,button);
+  39   3            P2_0 = 0;
+  40   3            Delay1ms(200);
+  41   3            P2_0 = 1;
+  42   3          }
+  43   2          
+  44   2      
+  45   2          //接收并处理完数据就清除[55 ,AA,]
+  46   2          if(recv_flag)
+  47   2          {
+  48   3            recv_flag = 0;
+  49   3            //处理数据(判断不同数据长度进行不同的处理)
+  50   3            switch (recv_buf[0])
+  51   3            {
+  52   4              case 1:
+  53   4      
+C51 COMPILER V9.54   MAIN                                                                  11/01/2022 16:58:00 PAGE 2   
+
+  54   4                break;
+  55   4              case 2:
+  56   4                break;
+  57   4              case 3:
+  58   4              default:
+  59   4                break;
+  60   4            }
+  61   3            UART_SendString(recv_buf);
+  62   3            clr_recvbuffer(recv_buf);    //清空数据
+  63   3          }
+  64   2          fsmTask(ch);
+  65   2        }
+  66   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     30    ----
-   CONSTANT SIZE    =   ----    ----
+   CODE SIZE        =     91    ----
+   CONSTANT SIZE    =     12    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       1
+   DATA SIZE        =   ----       2
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

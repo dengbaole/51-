@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   UART                                                                  10/26/2022 21:15:53 PAGE 1   
+C51 COMPILER V9.54   UART                                                                  11/01/2022 16:58:01 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE UART
@@ -11,147 +11,251 @@ line level    source
    1          #include "uart.h"
    2          #include <REGX52.H>
    3          
-   4          
-   5          unsigned char recv_buf[MAX_REV_NUM];
-   6          unsigned char recv_cnt = 0;
-   7          unsigned char recv_length;
-   8          unsigned char start_timer=0;
-   9          unsigned char recv_timer_cnt;
-  10          unsigned char recv_flag = 0;
-  11          
-  12          void uart_init(void)   //4800bps@12.000MHz
-  13          {
-  14   1          SCON = 0x50;        //接收使能
-  15   1          PCON |= 0x80;   //使能波特率倍速位SMOD
-  16   1      
-  17   1      
-  18   1          //定时器配置（用作波特率发生器）
-  19   1          TMOD = TMOD & 0x0F;   //低四位清零，高四位不变
-  20   1          TMOD = TMOD | 0x20;   //定时器模式配置
-  21   1          //赋初值和波特率有关
-  22   1          TL1 = 0xF3;   //设定定时初值
-  23   1        TH1 = 0xF3;   //设定定时器重装值
-  24   1      
-  25   1          //中断配置
-  26   1          ET1 = 0;       //禁用定时器1中断
-  27   1          TR1 = 1;       //启动定时器1
-  28   1      
-  29   1          EA = 1;
-  30   1          ES = 1;
-  31   1      }
-  32          
-  33          //发送1字节数据
-  34          void UART_SendByte(unsigned char Byte)
-  35          {
-  36   1          SBUF=Byte;    //把数据写到缓冲器中，自动发送给电脑
-  37   1          while(TI==0);
-  38   1          TI=0;         //标志位需要软件复位
-  39   1      }
-  40          
-  41          //打印字符串
-  42          void UART_SendString(unsigned char *buf)
-  43          {
-  44   1          while (*buf != '\0')
-  45   1          {
-  46   2              UART_SendByte(*buf++);
-  47   2          }
-  48   1      }
-  49          
-  50          //printf重定向
-  51          char putchar(char c)
-  52          {
-  53   1          UART_SendByte(c);
-  54   1          return c;
-C51 COMPILER V9.54   UART                                                                  10/26/2022 21:15:53 PAGE 2   
+   4          unsigned char code recv_correct[] = {0x55,0xAA,0x80,0x0,0x80,0x80};
+   5          unsigned char code sum_check_error[] = {0x55,0xAA,0x81,0x0,0x81,0x81};
+   6          unsigned char code xor_check_error[] = {0x55,0xAA,0x82,0x0,0x82,0x82};
+   7          unsigned char recv_buf[MAX_REV_NUM];
+   8          unsigned char recv_cnt = 0;
+   9          unsigned char recv_flag = 0;
+  10          unsigned char machine_stap = 0;
+  11          unsigned int led_data;
+  12          unsigned int led_cnt;
+  13          unsigned int beep_data;
+  14          unsigned int beep_cnt;
+  15          unsigned char recv_length;
+  16          
+  17          void uart_init(void)   //4800bps@12.000MHz
+  18          {
+  19   1          SCON = 0x50;        //接收使能
+  20   1          PCON |= 0x80;   //使能波特率倍速位SMOD
+  21   1      
+  22   1      
+  23   1          //定时器配置（用作波特率发生器）
+  24   1          TMOD = TMOD & 0x0F;   //低四位清零，高四位不变
+  25   1          TMOD = TMOD | 0x20;   //定时器模式配置
+  26   1          //赋初值和波特率有关
+  27   1          TL1 = 0xF3;   //设定定时初值
+  28   1        TH1 = 0xF3;   //设定定时器重装值
+  29   1      
+  30   1          //中断配置
+  31   1          ET1 = 0;       //禁用定时器1中断
+  32   1          TR1 = 1;       //启动定时器1
+  33   1      
+  34   1          EA = 1;
+  35   1          ES = 1;
+  36   1      }
+  37          
+  38          //发送1字节数据
+  39          void UART_SendByte(unsigned char Byte)
+  40          {
+  41   1          SBUF=Byte;    //把数据写到缓冲器中，自动发送给电脑
+  42   1          while(TI==0);
+  43   1          TI=0;         //标志位需要软件复位
+  44   1      }
+  45          
+  46          //打印字符串
+  47          void UART_SendString(unsigned char *buf)
+  48          {
+  49   1          while (*buf != '\0')
+  50   1          {
+  51   2              UART_SendByte(*buf++);
+  52   2          }
+  53   1      }
+  54          
+C51 COMPILER V9.54   UART                                                                  11/01/2022 16:58:01 PAGE 2   
 
-  55   1      }
-  56          
-  57          void clr_recvbuffer(unsigned char *buf)
-  58          {
-  59   1          unsigned char i;
-  60   1          for(i=0;i<MAX_REV_NUM;i++)
-  61   1          {
-  62   2              buf[i]=0;
-  63   2          }
-  64   1      }
-  65          
-  66          //接收数据处理函数
-  67          void uart_service(unsigned char *buf)
-  68          {
-  69   1          unsigned char recv_move_indev;
-  70   1          if(recv_flag)
-  71   1          {
-  72   2              recv_flag = 0;
-  73   2              start_timer = 0;
-  74   2            
-  75   2              //接收的数据要大于5个字节(包头，地址，数据类型，数据，校验)，
-  76   2              while((recv_cnt>=5)&&(recv_move_indev<=recv_cnt))
-  77   2              {
-  78   3                  //判断包头地址数据类型
-  79   3                  if((buf[recv_move_indev+0]==0x55)&&(buf[recv_move_indev+1]==0xAA)&&(buf[recv_move_indev+2]==0x
-             -55))
-  80   3                  {
-  81   4                      if((buf[recv_move_indev+3]==0x01)&&(buf[recv_move_indev+4]==0x02))
-  82   4                      {
-  83   5                          printf("11111111111111111111\n");     //接收到数据{0x55 0xaa 0x55 0x01 0x02}亮�
-             -�
-  84   5                          P2_1 = 0;
-  85   5                      }
-  86   4                      if((buf[recv_move_indev+3]==0x02)&&(buf[recv_move_indev+4]==0x03))
-  87   4                      {
-  88   5                          printf("2222222222222222222\n");      //接收到数据{0x55 0xaa 0x55 0x02 0x03}灭�
-             -�
-  89   5                          P2_1 = 1;
-  90   5                      }
-  91   4                      break;   //查找成功并执行判断后退出循环
-  92   4                  }
-  93   3                  recv_move_indev++;
-  94   3              }
-  95   2              UART_SendString(recv_buf);    //打印接收到的数据
-  96   2              clr_recvbuffer(recv_buf);     //清除缓冲buff
-  97   2              recv_cnt = 0;
-  98   2          }
-  99   1      }
- 100          
- 101          
- 102          
- 103          
- 104          //中断函数名称自定义，函数后面加中断号
- 105          void UART_ISR() interrupt 4
- 106          {
- 107   1          
- 108   1          //判断是否是接收中断
- 109   1          if(RI)
- 110   1          {
- 111   2              RI = 0;
- 112   2              start_timer=1;                      //启动计数器
- 113   2              //判断是否是结束符
-C51 COMPILER V9.54   UART                                                                  10/26/2022 21:15:53 PAGE 3   
+  55          //printf重定向
+  56          char putchar(char c)
+  57          {
+  58   1          UART_SendByte(c);
+  59   1          return c;
+  60   1      }
+  61          
+  62          void clr_recvbuffer(unsigned char *buf)
+  63          {
+  64   1          unsigned char i;
+  65   1          for(i=0;i<MAX_REV_NUM;i++)
+  66   1          {
+  67   2              buf[i]=0;
+  68   2          }
+  69   1      }
+  70          
+  71          // //接收数据处理函数
+  72          // void uart_service(unsigned char *buf)
+  73          // {
+  74          //     unsigned char recv_move_indev;
+  75          //     if(recv_flag)
+  76          //     {
+  77          //         recv_flag = 0;
+  78          //         start_timer = 0;
+  79                
+  80          //         //接收的数据要大于5个字节(包头，地址，数据类型，数据，校验)，
+  81          //         while((recv_cnt>=5)&&(recv_move_indev<=recv_cnt))
+  82          //         {
+  83          //             //判断包头地址数据类型
+  84          //             if((buf[recv_move_indev+0]==0x55)&&(buf[recv_move_indev+1]==0xAA)&&(buf[recv_move_indev+2]=
+             -=0x55))
+  85          //             {
+  86          //                 if((buf[recv_move_indev+3]==0x01)&&(buf[recv_move_indev+4]==0x02))
+  87          //                 {
+  88          //                     printf("11111111111111111111\n");     //接收到数据{0x55 0xaa 0x55 0x01 0x02}�
+             -�灯
+  89          //                     P2_1 = 0;
+  90          //                 }
+  91          //                 if((buf[recv_move_indev+3]==0x02)&&(buf[recv_move_indev+4]==0x03))
+  92          //                 {
+  93          //                     printf("2222222222222222222\n");      //接收到数据{0x55 0xaa 0x55 0x02 0x03}�
+             -�灯
+  94          //                     P2_1 = 1;
+  95          //                 }
+  96          //                 break;   //查找成功并执行判断后退出循环
+  97          //             }
+  98          //             recv_move_indev++;
+  99          //         }
+ 100          //         UART_SendString(recv_buf);    //打印接收到的数据
+ 101          //         clr_recvbuffer(recv_buf);     //清除缓冲buff
+ 102          //         recv_cnt = 0;
+ 103          //     }
+ 104          // }
+ 105          
+ 106          
+ 107          
+ 108          
+ 109          //中断函数名称自定义，函数后面加中断号
+ 110          void UART_ISR() interrupt 4
+ 111          {
+ 112   1          unsigned char i;
+ 113   1          unsigned char recv_data;   //数据缓冲区
+C51 COMPILER V9.54   UART                                                                  11/01/2022 16:58:01 PAGE 3   
 
- 114   2              if(recv_cnt<MAX_REV_NUM)
- 115   2              {
- 116   3                  recv_buf[recv_cnt++] = SBUF;   //接收到的数据放大缓冲区
- 117   3              }
- 118   2              else
- 119   2              {
- 120   3                  recv_cnt=MAX_REV_NUM;
- 121   3              }
- 122   2              recv_timer_cnt = 0;               //接收完一帧数据后，定时器计数清零
- 123   2          }
- 124   1          // //发送数据中断
- 125   1          // if(TI)
- 126   1          // {
- 127   1          //     TI=0;
- 128   1          // }
- 129   1      }
+ 114   1          static unsigned char sum_check;   //校验和
+ 115   1          static unsigned char xor_check;   //or校验
+ 116   1          //判断是否是接收中断
+ 117   1          if(RI)
+ 118   1          {
+ 119   2              RI = 0;
+ 120   2              recv_data = SBUF;
+ 121   2              switch(machine_stap)
+ 122   2              {
+ 123   3                  //判断包头是否是 0x55 0xAA
+ 124   3                  case 0: 
+ 125   3                      if(recv_data==0x55)
+ 126   3                      {
+ 127   4                          machine_stap = 1;
+ 128   4                      }   
+ 129   3                      else
+ 130   3                      {
+ 131   4                          machine_stap = 0;
+ 132   4                      }
+ 133   3                      break;
+ 134   3                  case 1: 
+ 135   3                      if(recv_data == 0xAA)
+ 136   3                      {
+ 137   4                          machine_stap = 2;
+ 138   4                          recv_cnt = 0;
+ 139   4                      }
+ 140   3                      else
+ 141   3                      {
+ 142   4                          machine_stap = 0;
+ 143   4                      }
+ 144   3                      break;
+ 145   3                  case 2:
+ 146   3                      //校验和（地址开始计算）
+ 147   3                      sum_check = recv_data;
+ 148   3                      //xor校验
+ 149   3                      xor_check = recv_data;
+ 150   3                      recv_buf[recv_cnt] = recv_data;   //数据类型
+ 151   3                      recv_cnt++;
+ 152   3                      machine_stap = 3;
+ 153   3                      break;
+ 154   3                  case 3:
+ 155   3                      //校验和（地址开始计算）
+ 156   3                      sum_check += recv_data;
+ 157   3                      //xor校验
+ 158   3                      xor_check ^= recv_data;
+ 159   3                      recv_length = recv_data;
+ 160   3                      machine_stap = 4;
+ 161   3                      break;
+ 162   3                  case 4:
+ 163   3                      //校验和（地址开始计算）
+ 164   3                      sum_check += recv_data;
+ 165   3                      //xor校验
+ 166   3                      xor_check ^= recv_data;
+ 167   3                      recv_buf[recv_cnt] = recv_data;   //具体数据
+ 168   3                      if(recv_cnt==recv_length)
+ 169   3                      {
+ 170   4                          machine_stap = 5;
+ 171   4                      }
+ 172   3                      else
+ 173   3                      {
+ 174   4                          machine_stap = 4;
+ 175   4                      }
+C51 COMPILER V9.54   UART                                                                  11/01/2022 16:58:01 PAGE 4   
+
+ 176   3                      recv_cnt++;
+ 177   3                      break;
+ 178   3                  case 5:      
+ 179   3                      //和校验是否正确
+ 180   3                      if(sum_check == recv_data)
+ 181   3                      {
+ 182   4                          machine_stap = 6;
+ 183   4                      }
+ 184   3                      else
+ 185   3                      {
+ 186   4                          recv_flag = 1;
+ 187   4                          machine_stap = 0;
+ 188   4                          for(i = 0;i<6;i++)
+ 189   4                          {
+ 190   5                              UART_SendByte(sum_check_error[i]);
+ 191   5                          }
+ 192   4                      }
+ 193   3                      break;
+ 194   3                  case 6:
+ 195   3                      //xor校验正确
+ 196   3                      if(xor_check == recv_data)
+ 197   3                      {
+ 198   4                          recv_flag = 1;  //接收到一帧正确数据标志
+ 199   4                          for(i = 0;i<6;i++)
+ 200   4                          {
+ 201   5                              UART_SendByte(recv_correct[i]);
+ 202   5                          }
+ 203   4                      }
+ 204   3                      else
+ 205   3                      {
+ 206   4                          recv_flag = 1;
+ 207   4                          for(i = 0;i<6;i++)
+ 208   4                          {
+ 209   5                              UART_SendByte(xor_check_error[i]);
+ 210   5                          }
+ 211   4      
+ 212   4                          //错误应答
+ 213   4                      }
+ 214   3                      machine_stap = 0;
+ 215   3                      recv_cnt = 0;
+ 216   3                      sum_check = 0;
+ 217   3                      xor_check = 0;
+ 218   3                   
+ 219   3                      break;
+ 220   3                  default:
+ 221   3                      break;
+ 222   3              }
+ 223   2          }
+ 224   1          // //发送数据中断
+ 225   1          // if(TI)
+ 226   1          // {
+ 227   1          //     TI=0;
+ 228   1          // }
+ 229   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    361    ----
-   CONSTANT SIZE    =     43    ----
+   CODE SIZE        =    370    ----
+   CONSTANT SIZE    =     18    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     15      10
+   DATA SIZE        =     24       6
+C51 COMPILER V9.54   UART                                                                  11/01/2022 16:58:01 PAGE 5   
+
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
