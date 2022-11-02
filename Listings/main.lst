@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  11/01/2022 16:58:00 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  11/02/2022 12:34:42 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -15,25 +15,25 @@ line level    source
    5          #include "timer.h"
    6          #include "uart.h"
    7          #include "matrixkey.h"
-   8          //#include "log.h"
-   9          
+   8          #include "beep.h"
+   9          //#include "log.h"
   10          
   11          
-  12          void main()
-  13          {
-  14   1        unsigned char button;
-  15   1        char ch = 1;
-  16   1        unsigned char KeyNum;
-  17   1        task_init();
-  18   1        timer0_init();
-  19   1        uart_init();   //波特率4800 8位无校验
-  20   1        //printf("51_code version1.0.0\n");
-  21   1        //EMlog(LOG_DEBUG,"HELLO\n");
-  22   1      
-  23   1        while(1)
-  24   1        {
-  25   2          //矩阵按键
-  26   2          
+  12          
+  13          void main()
+  14          {
+  15   1        unsigned char button;
+  16   1        char ch = 1;
+  17   1        unsigned char KeyNum;
+  18   1        task_init();
+  19   1        timer0_init();
+  20   1        uart_init();   //波特率4800 8位无校验
+  21   1        //printf("51_code version1.0.0\n");
+  22   1        //EMlog(LOG_DEBUG,"HELLO\n");
+  23   1      
+  24   1        while(1)
+  25   1        {
+  26   2          //矩阵按键
   27   2          KeyNum = MatrixKey();
   28   2          if(KeyNum)
   29   2          {
@@ -47,40 +47,38 @@ line level    source
   36   2          if(button)
   37   2          {
   38   3            //Static_Nixie(1,button);
-  39   3            P2_0 = 0;
-  40   3            Delay1ms(200);
-  41   3            P2_0 = 1;
-  42   3          }
-  43   2          
-  44   2      
-  45   2          //接收并处理完数据就清除[55 ,AA,]
-  46   2          if(recv_flag)
-  47   2          {
-  48   3            recv_flag = 0;
-  49   3            //处理数据(判断不同数据长度进行不同的处理)
-  50   3            switch (recv_buf[0])
-  51   3            {
-  52   4              case 1:
-  53   4      
-C51 COMPILER V9.54   MAIN                                                                  11/01/2022 16:58:00 PAGE 2   
+  39   3            Buzzer_Time(100);
+  40   3          }
+  41   2          
+  42   2      
+  43   2          //接收并处理完数据就清除[55 ,AA,]
+  44   2          if(recv_flag)
+  45   2          {
+  46   3            recv_flag = 0;
+  47   3            //处理数据(判断不同数据长度进行不同的处理)
+  48   3            switch (recv_buf[0])
+  49   3            {
+  50   4              case 1:
+  51   4      
+  52   4                break;
+  53   4              case 2:
+C51 COMPILER V9.54   MAIN                                                                  11/02/2022 12:34:42 PAGE 2   
 
   54   4                break;
-  55   4              case 2:
-  56   4                break;
-  57   4              case 3:
-  58   4              default:
-  59   4                break;
-  60   4            }
-  61   3            UART_SendString(recv_buf);
-  62   3            clr_recvbuffer(recv_buf);    //清空数据
-  63   3          }
-  64   2          fsmTask(ch);
-  65   2        }
-  66   1      }
+  55   4              case 3:
+  56   4              default:
+  57   4                break;
+  58   4            }
+  59   3            UART_SendString(recv_buf);
+  60   3            clr_recvbuffer(recv_buf);    //清空数据
+  61   3          }
+  62   2          fsmTask(ch);
+  63   2        }
+  64   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     91    ----
+   CODE SIZE        =     87    ----
    CONSTANT SIZE    =     12    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

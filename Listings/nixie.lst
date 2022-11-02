@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   NIXIE                                                                 11/01/2022 16:58:01 PAGE 1   
+C51 COMPILER V9.54   NIXIE                                                                 11/02/2022 12:34:42 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE NIXIE
@@ -62,7 +62,7 @@ line level    source
   52          void Static_Nixie(unsigned char Location,Number)
   53          {
   54   1        switch(Location)
-C51 COMPILER V9.54   NIXIE                                                                 11/01/2022 16:58:01 PAGE 2   
+C51 COMPILER V9.54   NIXIE                                                                 11/02/2022 12:34:42 PAGE 2   
 
   55   1        {
   56   2          case 1:P2_4=1;P2_3=1;P2_2=1;break;

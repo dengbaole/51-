@@ -108,11 +108,11 @@ void Timer2_ISR() interrupt 5
 {
     TF2 = 0;
     //设置蜂鸣器频率
-    if(FreqTable[FreqSelect])	//如果不是休止符
-	{
-		/*取对应频率值的重装载值到定时器*/
-		TL0 = FreqTable[FreqSelect]%256;		//设置定时初值
-		TH0 = FreqTable[FreqSelect]/256;		//设置定时初值
-		//Buzzer=!Buzzer;	                  //翻转蜂鸣器IO口
-	}
+//   if(FreqTable[FreqSelect])	//如果不是休止符
+//	{
+//		/*取对应频率值的重装载值到定时器*/
+//		TL0 = FreqTable[FreqSelect]%256;		//设置定时初值
+//		TH0 = FreqTable[FreqSelect]/256;		//设置定时初值
+//		//Buzzer=!Buzzer;	                  //翻转蜂鸣器IO口
+//	}
 }

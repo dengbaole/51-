@@ -1,11 +1,6 @@
-#ifndef _BEEP_H
-#define _BEEP_H
-#include <regx52.h>
+#ifndef __BUZZER_H__
+#define __BUZZER_H__
 
-#define SPEED    500
+void Buzzer_Time(unsigned int ms);
 
-extern unsigned int FreqTable[];
-unsigned char FreqSelect;
-unsigned char Music_xiaoxingxing[];
-
-#endif 
+#endif

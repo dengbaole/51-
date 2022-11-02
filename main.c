@@ -5,6 +5,7 @@
 #include "timer.h"
 #include "uart.h"
 #include "matrixkey.h"
+#include "beep.h"
 //#include "log.h"
 
 
@@ -23,7 +24,6 @@ void main()
 	while(1)
 	{
 		//矩阵按键
-		
 		KeyNum = MatrixKey();
 		if(KeyNum)
 		{
@@ -36,9 +36,7 @@ void main()
 		if(button)
 		{
 			//Static_Nixie(1,button);
-			P2_0 = 0;
-			Delay1ms(200);
-			P2_0 = 1;
+			Buzzer_Time(100);
 		}
 		
 
