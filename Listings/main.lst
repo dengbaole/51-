@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  11/04/2022 08:53:05 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  11/04/2022 18:18:39 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -17,117 +17,136 @@ line level    source
    7          #include "matrixkey.h"
    8          #include "beep.h"
    9          #include "AT24C02.h"
-  10          //#include "log.h"
-  11          
+  10          #include "DS18B20.h"
+  11          //#include "log.h"
   12          
-  13          unsigned char KeyNum;
-  14          unsigned char button;
-  15          unsigned char number;
-  16          
-  17          void main()
-  18          {
-  19   1        
-  20   1        char ch = 1;
-  21   1      
-  22   1        task_init();
-  23   1        timer0_init();
-  24   1        //timer2_init();
-  25   1        uart_init();   //波特率4800 8位无校验
-  26   1        //printf("51_code version1.0.0\n");
-  27   1        //EMlog(LOG_DEBUG,"HELLO\n");
-  28   1      
-  29   1      
-  30   1          //播放音乐
-  31   1      //  while(1)
-  32   1      //  {
-  33   1      //    if(Music[MusicSelect]!=0xFF)  //如果不是停止标志位
-  34   1      //    {
-  35   1      //      FreqSelect=Music[MusicSelect];  //选择音符对应的频率(在中断中的频率)
-  36   1      //      MusicSelect++;
-  37   1      //      Delay(SPEED/4*Music[MusicSelect]);  //选择音符对应的时值（响应时间）
-  38   1      //      MusicSelect++;
-  39   1      //      TR0=0;
-  40   1      //      Delay(5); //音符间短暂停顿
-  41   1      //      TR0=1;
-  42   1      //    }
-  43   1      //    else  //如果是停止标志位
-  44   1      //    {
-  45   1      //      TR0=0;
-  46   1      //      while(1);
-  47   1      //    }
-  48   1      //  }
-  49   1        
-  50   1        while(1)
-  51   1        {
-  52   2          // //矩阵按键(和蜂鸣器冲突)
-  53   2          KeyNum = MatrixKey();
-  54   2          if(KeyNum)
-C51 COMPILER V9.54   MAIN                                                                  11/04/2022 08:53:05 PAGE 2   
+  13          
+  14          unsigned char KeyNum;
+  15          unsigned char button;
+  16          unsigned char Speed;
+  17          unsigned char number;
+  18          float temperature;
+  19          
+  20          void main()
+  21          {
+  22   1        
+  23   1        char ch = 1;
+  24   1      
+  25   1        task_init();
+  26   1        timer0_init();
+  27   1        timer2_init();
+  28   1        uart_init();   //波特率4800 8位无校验
+  29   1        //printf("51_code version1.0.0\n");
+  30   1        //EMlog(LOG_DEBUG,"HELLO\n");
+  31   1      
+  32   1      
+  33   1          //播放音乐
+  34   1      //  while(1)
+  35   1      //  {
+  36   1      //    if(Music[MusicSelect]!=0xFF)  //如果不是停止标志位
+  37   1      //    {
+  38   1      //      FreqSelect=Music[MusicSelect];  //选择音符对应的频率(在中断中的频率)
+  39   1      //      MusicSelect++;
+  40   1      //      Delay(SPEED/4*Music[MusicSelect]);  //选择音符对应的时值（响应时间）
+  41   1      //      MusicSelect++;
+  42   1      //      TR0=0;
+  43   1      //      Delay(5); //音符间短暂停顿
+  44   1      //      TR0=1;
+  45   1      //    }
+  46   1      //    else  //如果是停止标志位
+  47   1      //    {
+  48   1      //      TR0=0;
+  49   1      //      while(1);
+  50   1      //    }
+  51   1      //  }
+  52   1        Speed = AT24C02_ReadByte(1);
+  53   1        Compare =AT24C02_ReadByte(2);
+  54   1        
+C51 COMPILER V9.54   MAIN                                                                  11/04/2022 18:18:39 PAGE 2   
 
-  55   2          {
-  56   3            printf("Keynum = %d",KeyNum);
-  57   3            Static_Nixie(8,KeyNum);
-  58   3          }
-  59   2          
-  60   2          
-  61   2          
-  62   2          
-  63   2          //独立按键
-  64   2          button = key_state();
-*** WARNING C206 IN LINE 64 OF main.c: 'key_state': missing function-prototype
-  65   2          if(button)
-  66   2          {
-  67   3            //Static_Nixie(1,button);
-  68   3            Buzzer_Time(100);
-  69   3            //测试AT24C02是否正常
-  70   3            if(button == 1)
-  71   3            {
-  72   4              AT24C02_WriteByte(1,5);
-  73   4            }
-  74   3              
-  75   3            if(button == 2)
+  55   1        while(1)
+  56   1        {
+  57   2          // //矩阵按键(和蜂鸣器冲突)
+  58   2          // KeyNum = MatrixKey();
+  59   2          // if(KeyNum)
+  60   2          // {
+  61   2          //  printf("Keynum = %d",KeyNum);
+  62   2          //  Static_Nixie(8,KeyNum);
+  63   2          // }
+  64   2          
+  65   2          
+  66   2          
+  67   2          
+  68   2          //独立按键
+  69   2          button = key_state();
+*** WARNING C206 IN LINE 69 OF main.c: 'key_state': missing function-prototype
+  70   2          if(button)
+  71   2          {
+  72   3            //Static_Nixie(1,button);
+  73   3            //Buzzer_Time(100);
+  74   3            //测试AT24C02是否正常
+  75   3            if(button == 1)
   76   3            {
-  77   4              number = AT24C02_ReadByte(1);
-  78   4              printf("%c",number);
-  79   4            }
-  80   3          }
-  81   2          
-  82   2      
-  83   2          //接收并处理完数据就清除[55 ,AA,]
-  84   2          if(recv_flag)
-  85   2          {
-  86   3            recv_flag = 0;
-  87   3            //处理数据(判断不同数据长度进行不同的处理)
-  88   3            switch (recv_buf[0])
-  89   3            {
-  90   4              case 1:
-  91   4      
-  92   4                break;
-  93   4              case 2:
-  94   4                break;
-  95   4              case 3:
-  96   4              default:
-  97   4                break;
+  77   4              Speed++;
+  78   4              Speed%=5;
+  79   4              if(Speed==0){Compare=0;}  //设置比较值，改变PWM占空比
+  80   4              if(Speed==1){Compare=45;}
+  81   4              if(Speed==2){Compare=50;}
+  82   4              if(Speed==3){Compare=75;}
+  83   4              if(Speed==4){Compare=100;}
+  84   4              Static_Nixie(1,Speed);
+  85   4      
+  86   4              AT24C02_WriteByte(1,Speed);
+  87   4              AT24C02_WriteByte(2,Compare);
+  88   4            }
+  89   3              
+  90   3            if(button == 2)
+  91   3            {
+  92   4              //number = AT24C02_ReadByte(1);
+  93   4      //        printf("%c",number);
+  94   4      //        
+  95   4      //        DS18B20_ConvertT();                 //温度转换
+  96   4      //        temperature = DS18B20_ReadT();      //读取温度
+  97   4      //        printf("temperature  = %f c\n",temperature);
   98   4            }
-  99   3            UART_SendString(recv_buf);
- 100   3            clr_recvbuffer(recv_buf);    //清空数据
- 101   3          }
- 102   2          fsmTask(ch);
- 103   2        }
- 104   1      }
+  99   3          }
+ 100   2          
+ 101   2      
+ 102   2          //接收并处理完数据就清除[55 ,AA,]
+ 103   2          if(recv_flag)
+ 104   2          {
+ 105   3            recv_flag = 0;
+ 106   3            //处理数据(判断不同数据长度进行不同的处理)
+ 107   3            switch (recv_buf[0])
+ 108   3            {
+ 109   4              case 1:
+ 110   4      
+ 111   4                break;
+ 112   4              case 2:
+ 113   4                break;
+ 114   4              case 3:
+ 115   4              default:
+C51 COMPILER V9.54   MAIN                                                                  11/04/2022 18:18:39 PAGE 3   
+
+ 116   4                break;
+ 117   4            }
+ 118   3            UART_SendString(recv_buf);
+ 119   3            clr_recvbuffer(recv_buf);    //清空数据
+ 120   3          }
+ 121   2          fsmTask(ch);
+ 122   2        }
+ 123   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    144    ----
-   CONSTANT SIZE    =     15    ----
+   CODE SIZE        =    179    ----
+   CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
-   PDATA SIZE       =      3       1
+   PDATA SIZE       =      8       1
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
-
-C51 COMPILER V9.54   MAIN                                                                  11/04/2022 08:53:05 PAGE 3   
 
 
 C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

@@ -4,6 +4,7 @@
 
 extern unsigned int T0Countms;
 extern unsigned int T0Count_100ms;
+extern unsigned char Compare;
 void timer0_init(void);
 void timer1_init(void);
 void timer2_init(void);

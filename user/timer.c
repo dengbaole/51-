@@ -3,6 +3,7 @@
 #include "uart.h"
 #include "nixie.h"
 #include "beep.h"
+#include "led.h"
 
 
 /****************************************************************************************************
@@ -12,7 +13,9 @@
 *****************************************************************************************************/
 unsigned int T0Countms;
 unsigned int T0Count_100ms;
-
+unsigned char T2Counter_100us;
+unsigned char Compare;
+sbit Motor=P1^0;
 
                                                                                                
 
@@ -55,13 +58,16 @@ void timer1_init(void)   //1000微秒@12.000MHz
 
 
 
-void timer2_init(void)  //1微秒@12.000MHz
+void timer2_init(void)  ////100微秒@12.000MHz1微秒@12.000MHz
 {
-    T2MOD = 0;		    //初始化模式寄存器
-	T2CON = 0;		    //初始化控制寄存器
-    TL2 = 64535/256;	//设置定时初值
-	TH2 = 64535%256;	//设置定时初值
-	TR2 = 1;		    //定时器2开始计时
+	T2MOD = 0;		//初始化模式寄存器
+	T2CON = 0;		//初始化控制寄存器
+	TL2 = 0x9C;		//设置定时初值
+	TH2 = 0xFF;		//设置定时初值
+	RCAP2L = 0x9C;		//设置定时重载值
+	RCAP2H = 0xFF;		//设置定时重载值
+	TR2 = 1;		//定时器2开始计时
+
 
     //中断配置
     ET2 = 1;
@@ -90,13 +96,18 @@ void Timer1_ISR() interrupt 3
 
 void Timer2_ISR() interrupt 5
 {
-    //TF2 = 0;
-    //设置蜂鸣器频率
-//   if(FreqTable[FreqSelect])	//如果不是休止符
-//  	{
-//  		/*取对应频率值的重装载值到定时器*/
-//  		TL0 = FreqTable[FreqSelect]%256;		//设置定时初值
-//  		TH0 = FreqTable[FreqSelect]/256;		//设置定时初值
-//  		Buzzer=!Buzzer;	                  //翻转蜂鸣器IO口
-//  	}
+    T2Counter_100us++;
+    if(T2Counter_100us>=100)
+    {
+        T2Counter_100us = 0;
+    }
+
+    if(T2Counter_100us<Compare)
+    {
+        Motor = 1;
+    }
+    else
+    {
+        Motor = 0;
+    }
 }

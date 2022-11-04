@@ -13,7 +13,9 @@
 
 unsigned char KeyNum;
 unsigned char button;
+unsigned char Speed;
 unsigned char number;
+float temperature;
 
 void main()
 {
@@ -22,7 +24,7 @@ void main()
 
 	task_init();
 	timer0_init();
-	//timer2_init();
+	timer2_init();
 	uart_init();   //波特率4800 8位无校验
 	//printf("51_code version1.0.0\n");
 	//EMlog(LOG_DEBUG,"HELLO\n");
@@ -47,16 +49,17 @@ void main()
 //			while(1);
 //		}
 //	}
+
 	
 	while(1)
 	{
 		// //矩阵按键(和蜂鸣器冲突)
-		KeyNum = MatrixKey();
-		if(KeyNum)
-		{
-			printf("Keynum = %d",KeyNum);
-			Static_Nixie(8,KeyNum);
-		}
+		// KeyNum = MatrixKey();
+		// if(KeyNum)
+		// {
+		// 	printf("Keynum = %d",KeyNum);
+		// 	Static_Nixie(8,KeyNum);
+		// }
 		
 		
 		
@@ -66,19 +69,29 @@ void main()
 		if(button)
 		{
 			//Static_Nixie(1,button);
-			Buzzer_Time(100);
+			//Buzzer_Time(100);
 			//测试AT24C02是否正常
 			if(button == 1)
 			{
-				DS18B20_ConvertT();   //温度转换
-				DS18B20_ReadT();      //读取温度
-				AT24C02_WriteByte(1,5);
+				Speed++;
+				Speed%=5;
+				if(Speed==0){Compare=0;}	//设置比较值，改变PWM占空比
+				if(Speed==1){Compare=45;}
+				if(Speed==2){Compare=50;}
+				if(Speed==3){Compare=75;}
+				if(Speed==4){Compare=100;}
+				Static_Nixie(1,Speed);
+
 			}
 				
 			if(button == 2)
 			{
-				number = AT24C02_ReadByte(1);
-				printf("%c",number);
+				//number = AT24C02_ReadByte(1);
+//				printf("%c",number);
+//				
+//				DS18B20_ConvertT();                 //温度转换
+//				temperature = DS18B20_ReadT();      //读取温度
+//				printf("temperature  = %f c\n",temperature);
 			}
 		}
 		

@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   UART                                                                  11/04/2022 08:53:06 PAGE 1   
+C51 COMPILER V9.54   UART                                                                  11/04/2022 18:18:39 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
   52   2          }
   53   1      }
   54          
-C51 COMPILER V9.54   UART                                                                  11/04/2022 08:53:06 PAGE 2   
+C51 COMPILER V9.54   UART                                                                  11/04/2022 18:18:39 PAGE 2   
 
   55          //printf重定向
   56          char putchar(char c)
@@ -126,7 +126,7 @@ line level    source
  111          {
  112   1          unsigned char i;
  113   1          unsigned char recv_data;   //数据缓冲区
-C51 COMPILER V9.54   UART                                                                  11/04/2022 08:53:06 PAGE 3   
+C51 COMPILER V9.54   UART                                                                  11/04/2022 18:18:39 PAGE 3   
 
  114   1          static unsigned char sum_check;   //校验和
  115   1          static unsigned char xor_check;   //or校验
@@ -190,7 +190,7 @@ line level    source
  173   3                      {
  174   4                          machine_stap = 4;
  175   4                      }
-C51 COMPILER V9.54   UART                                                                  11/04/2022 08:53:06 PAGE 4   
+C51 COMPILER V9.54   UART                                                                  11/04/2022 18:18:39 PAGE 4   
 
  176   3                      recv_cnt++;
  177   3                      break;
@@ -254,7 +254,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =     24       6
    DATA SIZE        =   ----    ----
-C51 COMPILER V9.54   UART                                                                  11/04/2022 08:53:06 PAGE 5   
+C51 COMPILER V9.54   UART                                                                  11/04/2022 18:18:39 PAGE 5   
 
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----

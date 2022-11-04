@@ -24,7 +24,7 @@ Project File Date:  10/26/2022
 <h2>Output:</h2>
 Rebuild target 'Target 1'
 compiling main.c...
-main.c(64): warning C206: 'key_state': missing function-prototype
+main.c(69): warning C206: 'key_state': missing function-prototype
 compiling delay.c...
 compiling separate_button.c...
 compiling task.c...
@@ -48,18 +48,22 @@ linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?NIXIETASKINIT?TASK
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MATRIXKEY?MATRIXKEY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?TIMER1_INIT?TIMER
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?TIMER2_INIT?TIMER
+    SEGMENT: ?PR?_PUTCHAR?UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_BUZZER_TIME?BEEP
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?CO?BEEP
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?DS18B20_CONVERTT?DS18B20
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?DS18B20_READT?DS18B20
-Program Size: data=15.1 xdata=158 code=5084
+Program Size: data=9.0 xdata=146 code=2970
 creating hex file from ".\Objects\Project"...
-".\Objects\Project" - 0 Error(s), 10 Warning(s).
+".\Objects\Project" - 0 Error(s), 12 Warning(s).
 </pre>
 </body>
 </html>
