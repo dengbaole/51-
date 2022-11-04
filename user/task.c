@@ -4,8 +4,10 @@
 #include "matrixkey.h"
 #include "uart.h"
 #include "delay.h"
+#include "beep.h"
 
-unsigned char button;
+extern unsigned char KeyNum;
+extern unsigned char button;
 static void MyTask(char ch);
 static void NixieTask(void);
 
@@ -14,7 +16,7 @@ typedef enum
 	STATE_IDLE, 									//����״̬
 	STATE_NIXIE,									//�ϴ�����״̬
 	STATE_MATRIXKEY, 								//��������״̬
-	STATE_ENROLL,									//ע��״̬
+	STATE_MUSIC,									//ע��״̬
 	STATE_MATCH,									//ƥ��״̬
 	STATE_DELETE,									//ɾ��״̬
 	STATE_STANDBY,
@@ -63,15 +65,21 @@ static void MyTask(char ch)
     switch(get_state)
     {
         case STATE_IDLE:
-
-
-        break;
+			if(button == 4)
+			{
+				get_state = STATE_MUSIC;
+			}
+        	break;
         case STATE_NIXIE:
-		NixieTask();
-        break;
+			NixieTask();
+        	break;
 		case STATE_MATRIXKEY:
+			break;
+		case STATE_MUSIC:
+
+			break;
         default:
-        break;
+       		break;
     }
 
 }
@@ -89,7 +97,6 @@ static void NixieTask(void)
 		case NIXIE_STATE_IDLE:
 		if(KEY1==0)
 		{
-			
 			get_Nixie_state = NIXIE_STATE_WORK;
 		}
 		Nixie(1,2);
@@ -108,3 +115,4 @@ static void NixieTask(void)
 	}
 
 } 
+

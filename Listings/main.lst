@@ -1,10 +1,10 @@
-C51 COMPILER V9.54   MAIN                                                                  11/02/2022 12:34:42 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  11/04/2022 08:53:05 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: D:\app\keil51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\user;D:\app\keil51\C51\INC\A
-                    -tmel) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: D:\app\keil51\C51\BIN\C51.EXE main.c COMPACT OPTIMIZE(8,SPEED) BROWSE INCDIR(.\user;D:\app\keil51\C
+                    -51\INC\Atmel) DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
 
 line level    source
 
@@ -16,76 +16,118 @@ line level    source
    6          #include "uart.h"
    7          #include "matrixkey.h"
    8          #include "beep.h"
-   9          //#include "log.h"
-  10          
+   9          #include "AT24C02.h"
+  10          //#include "log.h"
   11          
   12          
-  13          void main()
-  14          {
-  15   1        unsigned char button;
-  16   1        char ch = 1;
-  17   1        unsigned char KeyNum;
-  18   1        task_init();
-  19   1        timer0_init();
-  20   1        uart_init();   //波特率4800 8位无校验
-  21   1        //printf("51_code version1.0.0\n");
-  22   1        //EMlog(LOG_DEBUG,"HELLO\n");
-  23   1      
-  24   1        while(1)
-  25   1        {
-  26   2          //矩阵按键
-  27   2          KeyNum = MatrixKey();
-  28   2          if(KeyNum)
-  29   2          {
-  30   3            printf("Keynum = %d",KeyNum);
-  31   3            Static_Nixie(8,KeyNum);
-  32   3          }
-  33   2      
-  34   2          //独立按键
-  35   2          button = key_state();
-*** WARNING C206 IN LINE 35 OF main.c: 'key_state': missing function-prototype
-  36   2          if(button)
-  37   2          {
-  38   3            //Static_Nixie(1,button);
-  39   3            Buzzer_Time(100);
-  40   3          }
-  41   2          
-  42   2      
-  43   2          //接收并处理完数据就清除[55 ,AA,]
-  44   2          if(recv_flag)
-  45   2          {
-  46   3            recv_flag = 0;
-  47   3            //处理数据(判断不同数据长度进行不同的处理)
-  48   3            switch (recv_buf[0])
-  49   3            {
-  50   4              case 1:
-  51   4      
-  52   4                break;
-  53   4              case 2:
-C51 COMPILER V9.54   MAIN                                                                  11/02/2022 12:34:42 PAGE 2   
+  13          unsigned char KeyNum;
+  14          unsigned char button;
+  15          unsigned char number;
+  16          
+  17          void main()
+  18          {
+  19   1        
+  20   1        char ch = 1;
+  21   1      
+  22   1        task_init();
+  23   1        timer0_init();
+  24   1        //timer2_init();
+  25   1        uart_init();   //波特率4800 8位无校验
+  26   1        //printf("51_code version1.0.0\n");
+  27   1        //EMlog(LOG_DEBUG,"HELLO\n");
+  28   1      
+  29   1      
+  30   1          //播放音乐
+  31   1      //  while(1)
+  32   1      //  {
+  33   1      //    if(Music[MusicSelect]!=0xFF)  //如果不是停止标志位
+  34   1      //    {
+  35   1      //      FreqSelect=Music[MusicSelect];  //选择音符对应的频率(在中断中的频率)
+  36   1      //      MusicSelect++;
+  37   1      //      Delay(SPEED/4*Music[MusicSelect]);  //选择音符对应的时值（响应时间）
+  38   1      //      MusicSelect++;
+  39   1      //      TR0=0;
+  40   1      //      Delay(5); //音符间短暂停顿
+  41   1      //      TR0=1;
+  42   1      //    }
+  43   1      //    else  //如果是停止标志位
+  44   1      //    {
+  45   1      //      TR0=0;
+  46   1      //      while(1);
+  47   1      //    }
+  48   1      //  }
+  49   1        
+  50   1        while(1)
+  51   1        {
+  52   2          // //矩阵按键(和蜂鸣器冲突)
+  53   2          KeyNum = MatrixKey();
+  54   2          if(KeyNum)
+C51 COMPILER V9.54   MAIN                                                                  11/04/2022 08:53:05 PAGE 2   
 
-  54   4                break;
-  55   4              case 3:
-  56   4              default:
-  57   4                break;
-  58   4            }
-  59   3            UART_SendString(recv_buf);
-  60   3            clr_recvbuffer(recv_buf);    //清空数据
-  61   3          }
-  62   2          fsmTask(ch);
-  63   2        }
-  64   1      }
+  55   2          {
+  56   3            printf("Keynum = %d",KeyNum);
+  57   3            Static_Nixie(8,KeyNum);
+  58   3          }
+  59   2          
+  60   2          
+  61   2          
+  62   2          
+  63   2          //独立按键
+  64   2          button = key_state();
+*** WARNING C206 IN LINE 64 OF main.c: 'key_state': missing function-prototype
+  65   2          if(button)
+  66   2          {
+  67   3            //Static_Nixie(1,button);
+  68   3            Buzzer_Time(100);
+  69   3            //测试AT24C02是否正常
+  70   3            if(button == 1)
+  71   3            {
+  72   4              AT24C02_WriteByte(1,5);
+  73   4            }
+  74   3              
+  75   3            if(button == 2)
+  76   3            {
+  77   4              number = AT24C02_ReadByte(1);
+  78   4              printf("%c",number);
+  79   4            }
+  80   3          }
+  81   2          
+  82   2      
+  83   2          //接收并处理完数据就清除[55 ,AA,]
+  84   2          if(recv_flag)
+  85   2          {
+  86   3            recv_flag = 0;
+  87   3            //处理数据(判断不同数据长度进行不同的处理)
+  88   3            switch (recv_buf[0])
+  89   3            {
+  90   4              case 1:
+  91   4      
+  92   4                break;
+  93   4              case 2:
+  94   4                break;
+  95   4              case 3:
+  96   4              default:
+  97   4                break;
+  98   4            }
+  99   3            UART_SendString(recv_buf);
+ 100   3            clr_recvbuffer(recv_buf);    //清空数据
+ 101   3          }
+ 102   2          fsmTask(ch);
+ 103   2        }
+ 104   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     87    ----
-   CONSTANT SIZE    =     12    ----
+   CODE SIZE        =    144    ----
+   CONSTANT SIZE    =     15    ----
    XDATA SIZE       =   ----    ----
-   PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       2
+   PDATA SIZE       =      3       1
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
+
+C51 COMPILER V9.54   MAIN                                                                  11/04/2022 08:53:05 PAGE 3   
 
 
 C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

@@ -1,10 +1,10 @@
-C51 COMPILER V9.54   TASK                                                                  11/02/2022 12:34:42 PAGE 1   
+C51 COMPILER V9.54   TASK                                                                  11/04/2022 08:53:06 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE TASK
 OBJECT MODULE PLACED IN .\Objects\task.obj
-COMPILER INVOKED BY: D:\app\keil51\C51\BIN\C51.EXE user\task.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\user;D:\app\keil51\C51\
-                    -INC\Atmel) DEBUG OBJECTEXTEND PRINT(.\Listings\task.lst) TABS(2) OBJECT(.\Objects\task.obj)
+COMPILER INVOKED BY: D:\app\keil51\C51\BIN\C51.EXE user\task.c COMPACT OPTIMIZE(8,SPEED) BROWSE INCDIR(.\user;D:\app\kei
+                    -l51\C51\INC\Atmel) DEBUG OBJECTEXTEND PRINT(.\Listings\task.lst) TABS(2) OBJECT(.\Objects\task.obj)
 
 line level    source
 
@@ -14,123 +14,131 @@ line level    source
    4          #include "matrixkey.h"
    5          #include "uart.h"
    6          #include "delay.h"
-   7          
-   8          unsigned char button;
-   9          static void MyTask(char ch);
-  10          static void NixieTask(void);
-  11          
-  12          typedef enum
-  13          {
-  14            STATE_IDLE,                   //����״̬
-  15            STATE_NIXIE,                  //�ϴ�����״̬
-  16            STATE_MATRIXKEY,                //��������״̬
-  17            STATE_ENROLL,                 //ע��״̬
-  18            STATE_MATCH,                  //ƥ��״̬
-  19            STATE_DELETE,                 //ɾ��״̬
-  20            STATE_STANDBY,
-  21            STATE_WRITEFLASH,
-  22            STATE_USBKEY,
-  23            STATE_USER_TEST,
-  24            STATE_ENROLL_NOCHECK_FINGER,
-  25            STATE_MAX
-  26          } _FsmState; 
-  27          
-  28          typedef enum
-  29          {
-  30            NIXIE_STATE_IDLE,
-  31            NIXIE_STATE_WORK,
-  32            NIXIE_STATE_END,
-  33            NIXIE_STATE_MAX
-  34          }_NixieState;
-  35          
-  36          
+   7          #include "beep.h"
+   8          
+   9          extern unsigned char KeyNum;
+  10          extern unsigned char button;
+  11          static void MyTask(char ch);
+  12          static void NixieTask(void);
+  13          
+  14          typedef enum
+  15          {
+  16            STATE_IDLE,                   //����״̬
+  17            STATE_NIXIE,                  //�ϴ�����״̬
+  18            STATE_MATRIXKEY,                //��������״̬
+  19            STATE_MUSIC,                  //ע��״̬
+  20            STATE_MATCH,                  //ƥ��״̬
+  21            STATE_DELETE,                 //ɾ��״̬
+  22            STATE_STANDBY,
+  23            STATE_WRITEFLASH,
+  24            STATE_USBKEY,
+  25            STATE_USER_TEST,
+  26            STATE_ENROLL_NOCHECK_FINGER,
+  27            STATE_MAX
+  28          } _FsmState; 
+  29          
+  30          typedef enum
+  31          {
+  32            NIXIE_STATE_IDLE,
+  33            NIXIE_STATE_WORK,
+  34            NIXIE_STATE_END,
+  35            NIXIE_STATE_MAX
+  36          }_NixieState;
   37          
   38          
   39          
-  40          _FsmState get_state;
-  41          _NixieState get_Nixie_state;
-  42          
-  43          int get_task_state(void)
-  44          {
-  45   1        return get_state;
-  46   1      }
-  47          
-  48          
+  40          
+  41          
+  42          _FsmState get_state;
+  43          _NixieState get_Nixie_state;
+  44          
+  45          int get_task_state(void)
+  46          {
+  47   1        return get_state;
+  48   1      }
   49          
   50          
-  51          void fsmTask(char ch)
-  52          {
-  53   1        MyTask(ch);
-  54   1      }
-C51 COMPILER V9.54   TASK                                                                  11/02/2022 12:34:42 PAGE 2   
+  51          
+  52          
+  53          void fsmTask(char ch)
+  54          {
+C51 COMPILER V9.54   TASK                                                                  11/04/2022 08:53:06 PAGE 2   
 
-  55          void task_init(void)
-  56          {
-  57   1        get_state = STATE_IDLE;
-  58   1        get_Nixie_state = NIXIE_STATE_IDLE;
-  59   1      }
-  60          
-  61          static void MyTask(char ch)
-  62          {
-  63   1          switch(get_state)
-  64   1          {
-  65   2              case STATE_IDLE:
-  66   2      
-  67   2      
-  68   2              break;
-  69   2              case STATE_NIXIE:
-  70   2          NixieTask();
-  71   2              break;
-  72   2          case STATE_MATRIXKEY:
-  73   2              default:
-  74   2              break;
-  75   2          }
-  76   1      
-  77   1      }
-*** WARNING C280 IN LINE 61 OF user\task.c: 'ch': unreferenced local variable
-  78          
-  79          
-  80          void NixieTaskInit(void)
-  81          {
-  82   1        get_Nixie_state = NIXIE_STATE_IDLE;
-  83   1      }
-  84          
-  85          static void NixieTask(void)
-  86          {
-  87   1        switch(get_Nixie_state)
-  88   1        {
-  89   2          case NIXIE_STATE_IDLE:
-  90   2          if(KEY1==0)
-  91   2          {
-  92   3            
-  93   3            get_Nixie_state = NIXIE_STATE_WORK;
-  94   3          }
-  95   2          Nixie(1,2);
-  96   2          break;
-  97   2          case NIXIE_STATE_WORK:
-  98   2          Nixie(1,1);
-  99   2          if(KEY2==0)
- 100   2          {
- 101   3            
- 102   3            get_Nixie_state = NIXIE_STATE_IDLE;
- 103   3          }
- 104   2          break;
- 105   2          case NIXIE_STATE_END:
- 106   2          get_state=STATE_IDLE;
- 107   2          break;
- 108   2        }
- 109   1      
- 110   1      } 
+  55   1        MyTask(ch);
+  56   1      }
+  57          void task_init(void)
+  58          {
+  59   1        get_state = STATE_IDLE;
+  60   1        get_Nixie_state = NIXIE_STATE_IDLE;
+  61   1      }
+  62          
+  63          static void MyTask(char ch)
+  64          {
+  65   1          switch(get_state)
+  66   1          {
+  67   2              case STATE_IDLE:
+  68   2            if(button == 4)
+  69   2            {
+  70   3              get_state = STATE_MUSIC;
+  71   3            }
+  72   2                break;
+  73   2              case STATE_NIXIE:
+  74   2            NixieTask();
+  75   2                break;
+  76   2          case STATE_MATRIXKEY:
+  77   2            break;
+  78   2          case STATE_MUSIC:
+  79   2      
+  80   2            break;
+  81   2              default:
+  82   2                break;
+  83   2          }
+  84   1      
+  85   1      }
+*** WARNING C280 IN LINE 63 OF user\task.c: 'ch': unreferenced local variable
+  86          
+  87          
+  88          void NixieTaskInit(void)
+  89          {
+  90   1        get_Nixie_state = NIXIE_STATE_IDLE;
+  91   1      }
+  92          
+  93          static void NixieTask(void)
+  94          {
+  95   1        switch(get_Nixie_state)
+  96   1        {
+  97   2          case NIXIE_STATE_IDLE:
+  98   2          if(KEY1==0)
+  99   2          {
+ 100   3            get_Nixie_state = NIXIE_STATE_WORK;
+ 101   3          }
+ 102   2          Nixie(1,2);
+ 103   2          break;
+ 104   2          case NIXIE_STATE_WORK:
+ 105   2          Nixie(1,1);
+ 106   2          if(KEY2==0)
+ 107   2          {
+ 108   3            
+ 109   3            get_Nixie_state = NIXIE_STATE_IDLE;
+ 110   3          }
+ 111   2          break;
+ 112   2          case NIXIE_STATE_END:
+ 113   2          get_state=STATE_IDLE;
+ 114   2          break;
+ 115   2        }
+C51 COMPILER V9.54   TASK                                                                  11/04/2022 08:53:06 PAGE 3   
+
+ 116   1      
+ 117   1      } 
+ 118          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     76    ----
+   CODE SIZE        =    103    ----
    CONSTANT SIZE    =   ----    ----
-C51 COMPILER V9.54   TASK                                                                  11/02/2022 12:34:42 PAGE 3   
-
    XDATA SIZE       =   ----    ----
-   PDATA SIZE       =   ----    ----
-   DATA SIZE        =      3       1
+   PDATA SIZE       =      2       1
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
